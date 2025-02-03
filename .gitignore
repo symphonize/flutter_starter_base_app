@@ -53,7 +53,6 @@ macos
 windows
 web
 
-
 # Android related
 **/android/**/gradle-wrapper.jar
 **/android/.gradle
@@ -97,7 +96,6 @@ web
 **/ios/Flutter/flutter_export_environment.sh
 **/ios/Flutter/.last_build_id
 
-
 # Exceptions to above rules.
 !**/ios/**/default.mode1v3
 !**/ios/**/default.mode2v3
@@ -128,3 +126,8 @@ api-response.yml
 # bundle files
 *.apk
 *.aab
+
+# FVM Version Cache
+.fvm/
+/ios/
+/android/

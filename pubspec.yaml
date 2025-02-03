@@ -1,5 +1,7 @@
 name: flutter_starter_base_app
-description: Danlaw EV Charger
+description: Good place to start for a flutter project.
+  Contains useful libraries, not all of them  mey be needed for a specific project.
+  It is better trim it down based on the project's needs.
 
 publish_to: "none"
 version: 1.0.0+7
@@ -61,12 +63,6 @@ dev_dependencies:
   uuid: ^4.4.0
   flutter_launcher_icons: ^0.13.1
 
-flutter_launcher_icons:
-  android: "launcher_icon"
-  ios: true
-  remove_alpha_ios: true
-  image_path: "assets/launch_icon.ico"
-
 flutter:
   generate: true
   uses-material-design: true
@@ -76,14 +72,6 @@ flutter:
     - assets/bottom_navigation_bar/
     - assets/detail_icon/
     - assets/vehicle_icon/
-    - assets/charger_icon/
-    - assets/charger_icon/large/
-    - assets/charger_icon/medium/
-    - assets/charger_icon/small/
-    - assets/charger_icon/gray/
-    - assets/charger_icon/green/
-    - assets/charger_icon/blue/
-    - assets/charger_icon/red/
     - assets/
     - assets/images/
     - assets/setup_charger/
