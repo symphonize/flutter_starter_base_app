@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Metadata
-# Version: 2025.04.211365+3e64471
+# Version: 2025.05.143910+28334a4
 
 # Path to the project directory
 PROJECT_PATH="$(pwd)"
@@ -27,6 +27,7 @@ on_auto_mode=
 
 # Function to update the separator line whenever the terminal width changes
 update_separator() { SEPARATOR=$(printf '%*s' "$(tput cols)" '' | tr ' ' '═'); }
+trap update_separator SIGWINCH
 
 # Colors for output
 log_prompt() {
@@ -118,7 +119,6 @@ interactive_menu() {
         "Set Device|Searches for avaialble android and ios devices. Sets first available as target device."
     )
     while true; do
-        update_separator
         log_message "blue" "\n$SEPARATOR\n"
         log_header "Flutter App Manager ($ENVIRONMENT)\n"
         log_message "blue" "$SEPARATOR\n"
@@ -176,21 +176,27 @@ EOF
 ios='ios'
 android=
 create_platform_specific_files() {
-    read -r -p "$(log_warning "\nDo you want ios support? (y/n): ")" response
+    read -r -p "$(log_warning "\nWould you like to create for ios? (y/n/c): ")" response
     echo
     if [[ "$response" =~ ^[Yy]$ ]]; then
         if ! fvm flutter create --platforms ios .; then
             log_error "Unable to create ios files"
             return 1
         fi
+    elif [[ "$response" =~ ^[Cc]$ ]]; then
+        log_warning "\nReturning to menu\n"
+        return 42
     fi
-    read -r -p "$(log_warning "\nDo you want android support? (y/n): ")" response
+    read -r -p "$(log_warning "\nWould you like to create for android? (y/n/c): ")" response
     echo
     if [[ "$response" =~ ^[Yy]$ ]]; then
         if ! fvm flutter create --platforms android .; then
             log_error "Unable to create android files"
             return 1
         fi
+    elif [[ "$response" =~ ^[Cc]$ ]]; then
+        log_warning "\nReturning to menu\n"
+        return 42
     fi
 }
 create_menu() {
@@ -231,6 +237,9 @@ create_app() {
     create_env_if_missing
     create_fvm_if_missing
     create_platform_specific_files
+    if [[ $? -eq 42 ]]; then
+        return 0
+    fi
     fvm flutter pub get
     build
 }
@@ -316,13 +325,16 @@ build() {
     log_success "\nBuild finished\n"
 }
 search_and_set_target_device() {
+    log_message "blue" "\n$SEPARATOR\n"
     if [ -n "$FLUTTER_TARGET_DEVICE" ]; then
         log_success "\nCurrent device: $FLUTTER_TARGET_DEVICE"
         read -r -p "$(log_warning "\nRescan and set new device? (y/n): ")" response
+        echo
         if [[ "$response" =~ ^[Nn]$ ]]; then
             return 0
         fi
     fi
+    log_message "magenta" "Scanning for devices...\n"
     DEVICE_LIST=$(fvm flutter devices --machine)
     if [[ -z "$DEVICE_LIST" || "$DEVICE_LIST" == "[]" ]]; then
         log_error "No device found"
